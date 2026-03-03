@@ -24,6 +24,10 @@ public partial class DataRegistry : Node
 
 	public Dictionary<int, Quest> Quests = new();
 
+	public Dictionary<string, AbilityData> Abilities = new();
+	public Dictionary<string, MonsterData> Monsters = new();
+	public Dictionary<string, ZoneData> Zones = new();
+
 	public override void _Ready()
 	{
 		Instance = this;
