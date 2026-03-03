@@ -87,6 +87,7 @@ public partial class QuestMenu : Control
         }
         QuestManager.Instance.AssignQuestToPlayer(selectedQuest, Player.PlayerCharacter);
         UpdateQuestsList();
+        selectedQuest = null;
     }
 
     private void UpdateQuestsList()
@@ -137,6 +138,11 @@ public partial class QuestMenu : Control
 
     private void PopulateAssignedQuests()
     {
+        foreach (Node child in AssignedQuestsList.GetChildren())
+        {
+            child.QueueFree();
+        }
+
         foreach (var quest in QuestManager.Instance.ActiveQuests)
         {
             GD.Print($"Quest: {quest.Quest.QuestName}");
