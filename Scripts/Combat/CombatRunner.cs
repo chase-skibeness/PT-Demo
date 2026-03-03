@@ -38,8 +38,6 @@ public partial class CombatRunner : Node3D
 
         AttackButton.GrabFocus();
 
-        EscapeButton.Pressed += OnEscapePressed;
-
         GD.Print($"{CurrentRoom.Monsters.Count} monsters in room.");
         for (int i = 0; i < CurrentRoom.Monsters.Count; i++)
         {
@@ -62,12 +60,11 @@ public partial class CombatRunner : Node3D
                 zone.AddChild(characterNode);
             }
         }
-    }
 
-    private void OnEscapePressed()
-    {
-        GetTree().ChangeSceneToFile("res://Scenes/ExplorationRunner.tscn");
-
+        // Initialize the combat system
+        var combatSystem = new CombatSystem();
+        combatSystem.Name = "CombatSystem";
+        AddChild(combatSystem);
     }
 
 }
