@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ZoneData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Exploration/ZoneData.cs" id="1_bf"]
+
+[resource]
+script = ExtResource("1_bf")
+ZoneName = "Beginning Forest"
+Description = "A forest on the outskirts of town. Ideal for novice adventurers."
+MinLevel = 1
+MaxLevel = 5
+MonsterPool = PackedStringArray("Slime")
+SceneBackground = ""

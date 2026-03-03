@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Combat/AbilityData.cs" id="1_sp"]
+
+[resource]
+script = ExtResource("1_sp")
+AbilityName = "Spark"
+Description = "A small bolt of lightning strikes the enemy."
+MPCost = 6
+Type = 0
+Attribute = "Air"
+AbilityPower = 20
+Accuracy = 90
+Target = 0
+FormulaKey = "magical_damage"

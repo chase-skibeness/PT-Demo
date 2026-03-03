@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Combat/AbilityData.cs" id="1_fc"]
+
+[resource]
+script = ExtResource("1_fc")
+AbilityName = "Focus"
+Description = "Concentrate to boost your accuracy and critical hit rate."
+MPCost = 5
+Type = 1
+Attribute = "Physical"
+AbilityPower = 0
+Accuracy = 100
+Target = 4
+FormulaKey = "buff"
+BuffStat = "ACC"
+BuffAmount = 0.3
+BuffDuration = 3
