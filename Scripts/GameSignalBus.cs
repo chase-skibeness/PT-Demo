@@ -69,4 +69,18 @@ public partial class GameSignalBus : Node
     // Town
     [Signal]
     public delegate void TownResourceUpdatedEventHandler(ResourceType resourceType);
+
+    // Combat
+    [Signal]
+    public delegate void CombatStartedEventHandler();
+
+    [Signal]
+    public delegate void CombatEndedEventHandler(bool victory);
+
+    // Day cycle (for EndOfDayReport)
+    [Signal]
+    public delegate void ShowEndOfDayReportEventHandler();
+
+    [Signal]
+    public delegate void EndOfDayReportClosedEventHandler();
 }
