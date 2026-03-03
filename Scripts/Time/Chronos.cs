@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using System.Collections.Generic;
 
 namespace ChronosSpace
 {
@@ -38,7 +39,6 @@ namespace ChronosSpace
 			DayTimer.Autostart = false;
 			AddChild(DayTimer);
 			StartDay();
-			GameSignalBus.Instance.Connect(GameSignalBus.SignalName.FadeOutFinished, Callable.From(StartDay));
 			GameSignalBus.Instance.Connect(GameSignalBus.SignalName.RegisterTimeHook, Callable.From<ChronosTimeHook>(RegisterTimeHook));
 		}
 
@@ -67,6 +67,20 @@ namespace ChronosSpace
 		{
 			DayTimer.Paused = true;
 			GameSignalBus.Instance.EmitSignal(GameSignalBus.SignalName.DayEnded);
+
+			// Resolve NPC quests
+			var results = QuestResolver.ResolveAllNPCQuests();
+
+			// Show end-of-day report
+			var report = new EndOfDayReport();
+			AddChild(report);
+			report.Show(results, CurrentDay);
+			report.OnContinue = () =>
+			{
+				report.QueueFree();
+				QuestManager.Instance.RefreshAvailableQuests();
+				StartDay();
+			};
 		}
 
 		public void StartDay()
