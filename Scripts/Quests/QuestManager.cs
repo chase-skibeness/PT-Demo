@@ -157,4 +157,31 @@ public partial class QuestManager : Node
     {
         return ActiveQuests.Any(x => x.AssignedCharacter.CharacterId == npc.CharacterId);
     }
+
+    /// <summary>
+    /// Returns all active quests assigned to NPCs (non-empty CharacterId).
+    /// Used by QuestResolver for end-of-day auto-resolution.
+    /// </summary>
+    public List<ActiveQuest> GetNPCQuests()
+    {
+        return ActiveQuests.FindAll(q => q.AssignedCharacter != null && q.AssignedCharacter.CharacterId != System.Guid.Empty);
+    }
+
+    /// <summary>
+    /// Re-adds quests from the DataRegistry that are neither available nor currently active.
+    /// Called after end-of-day resolution to replenish the quest board.
+    /// </summary>
+    public void RefreshAvailableQuests()
+    {
+        foreach (var quest in DataRegistry.Quests.Values)
+        {
+            bool alreadyAvailable = AvailableQuests.Contains(quest);
+            bool currentlyActive = ActiveQuests.Exists(q => q.Quest == quest);
+            if (!alreadyAvailable && !currentlyActive)
+            {
+                AvailableQuests.Add(quest);
+                GD.Print($"Quest refreshed: {quest.QuestName}");
+            }
+        }
+    }
 }
