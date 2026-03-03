@@ -14,6 +14,10 @@ public partial class DataRegistry : Node
 
 	[Export] public string QuestsFolderPath = "res://Data/Quests";
 
+	[Export] public string AbilitiesFolderPath = "res://Data/Abilities";
+
+	[Export] public string ZonesFolderPath = "res://Data/Zones";
+
 	public Dictionary<string, Building> BuildingTemplates = new();
 
 	public Dictionary<string, RaceData> Races = new();
@@ -36,6 +40,8 @@ public partial class DataRegistry : Node
 		RegisterClasses();
 		RegisterGrowthRates();
 		RegisterQuests();
+		RegisterAbilities();
+		RegisterZones();
 	}
 
 	private void RegisterBuildings()
@@ -119,6 +125,40 @@ public partial class DataRegistry : Node
 			{
 				Quests[resource.QuestID] = resource;
 				GD.Print($"Registered quest: {resource.QuestName} with ID: {resource.QuestID}");
+			}
+		}
+	}
+
+	private void RegisterAbilities()
+	{
+		foreach (string path in DirAccess.GetFilesAt(AbilitiesFolderPath))
+		{
+			if (!path.EndsWith(".tres"))
+				continue;
+
+			var fullPath = $"{AbilitiesFolderPath}/{path}";
+			var resource = ResourceLoader.Load<AbilityData>(fullPath);
+			if (resource != null)
+			{
+				Abilities[resource.AbilityName] = resource;
+				GD.Print($"Registered ability: {resource.AbilityName}");
+			}
+		}
+	}
+
+	private void RegisterZones()
+	{
+		foreach (string path in DirAccess.GetFilesAt(ZonesFolderPath))
+		{
+			if (!path.EndsWith(".tres"))
+				continue;
+
+			var fullPath = $"{ZonesFolderPath}/{path}";
+			var resource = ResourceLoader.Load<ZoneData>(fullPath);
+			if (resource != null)
+			{
+				Zones[resource.ZoneName] = resource;
+				GD.Print($"Registered zone: {resource.ZoneName}");
 			}
 		}
 	}
