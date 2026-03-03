@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dvvh3cqf0wfky"
+path="res://.godot/imported/bow.obj-59ec876b79b7721a3f353d5dffa7e11c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bow.obj-59ec876b79b7721a3f353d5dffa7e11c.mesh"]
+
+source_file="res://Resources/KayKit_Adventurers_1.0_FREE/KayKit_Adventurers_1.0_FREE/Assets/obj/bow.obj"
+dest_files=["res://.godot/imported/bow.obj-59ec876b79b7721a3f353d5dffa7e11c.mesh", "res://.godot/imported/bow.obj-59ec876b79b7721a3f353d5dffa7e11c.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
