@@ -6,6 +6,18 @@ using System;
 
 public partial class CharacterSystem : Node
 {
+    private static readonly Dictionary<string, string[]> RaceNames = new()
+    {
+        { "Gignen", new[] { "Aldric", "Brynn", "Cedric", "Dara", "Elowen", "Finn", "Gwen", "Harlan", "Isolde", "Jareth", "Keira", "Leif", "Mira", "Nolan", "Orin" } },
+        { "Draconid", new[] { "Azraxis", "Brimscale", "Cindrath", "Drakara", "Embera", "Fyrthos", "Galdrix", "Hexara", "Ignatius", "Jyrath", "Kaldrix", "Lysscale", "Mordrath", "Nystrix", "Obsidix" } },
+        { "Felinara", new[] { "Amberwhisk", "Bristle", "Clover", "Dewpaw", "Echo", "Fawn", "Glimmer", "Hazel", "Ivy", "Jasper", "Kit", "Luna", "Misty", "Nimble", "Onyx" } },
+        { "Elphyn", new[] { "Aelindra", "Brightleaf", "Caelum", "Dawnmist", "Eirlys", "Faeryn", "Galadris", "Hespera", "Illyria", "Juniper", "Kalindra", "Loriel", "Mirael", "Nymeria", "Orellia" } },
+        { "Konstrukt", new[] { "Anvil", "Bolts", "Copperjaw", "Dynamo", "Ember-Core", "Forge", "Gearwright", "Hexbolt", "Ironclad", "Jolt", "Kinetic", "Lodestone", "Magnet", "Nickle", "Oxid" } },
+        { "Golemkin", new[] { "Boulder", "Cobble", "Duststone", "Earthen", "Flint", "Granite", "Hearthstone", "Ironore", "Jade", "Keystone", "Limestone", "Mortar", "Nugget", "Obsidian", "Pumice" } },
+        { "Verdani", new[] { "Ashwood", "Bramble", "Canopy", "Dewdrop", "Elm", "Fern", "Grove", "Hickory", "Iris", "Juniper", "Kudzu", "Lichen", "Moss", "Nettle", "Oleander" } },
+        { "Luminari", new[] { "Astra", "Beacon", "Celeste", "Dawnlight", "Eclipse", "Flare", "Gleam", "Halo", "Iridea", "Jewel", "Kindle", "Lantern", "Moonbeam", "Nebula", "Opal" } },
+    };
+
     [Export]
     public static CharacterSystem Instance;
     public DataRegistry DataRegistry;
@@ -32,7 +44,7 @@ public partial class CharacterSystem : Node
 
         var character = new Character
         {
-            CharacterName = "Jerry",
+            CharacterName = GetRandomName(race.Name),
             Race = race,
             Class = DataRegistry.Instance.Classes["Adventurer"],
 
@@ -50,8 +62,8 @@ public partial class CharacterSystem : Node
             character.GrowthRates[stat] = RollGrowthRate();
         }
 
-        // Apply growth rate modifiers to calc current stats
-        character.CalculateCurrentStats();
+        // Initialize current stats from base stats
+        character.InitializeStats();
 
         character.CharacterModel = CharacterModelDictionary[GD.RandRange(1, CharacterModelDictionary.Count)];
 
@@ -78,6 +90,15 @@ public partial class CharacterSystem : Node
         return DataRegistry.Instance.GrowthRates[GrowthRate.GrowthRateKey.Minimal];
     }
 
+    private string GetRandomName(string raceName)
+    {
+        if (RaceNames.TryGetValue(raceName, out var names) && names.Length > 0)
+        {
+            return names[GD.RandRange(0, names.Length - 1)];
+        }
+        return "Adventurer";
+    }
+
     public Character GetPlayerCharacter()
     {
         if (CharacterLookup.TryGetValue(Guid.Empty, out var playerCharacter))
@@ -100,7 +121,7 @@ public partial class CharacterSystem : Node
             pc.GrowthRates[stat] = DataRegistry.Instance.GrowthRates[GrowthRate.GrowthRateKey.Gradual];
         }
 
-        pc.CalculateCurrentStats();
+        pc.InitializeStats();
 
         CharacterLookup.Add(pc.CharacterId, pc);
 

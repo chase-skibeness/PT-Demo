@@ -208,35 +208,80 @@ namespace CharacterData
         [Export] public string[] Affinities = new string[0];
         public PackedScene CharacterModel;
 
-        public void CalculateCurrentStats()
-        {
-            if (CurrentStats.Count == 0)
-            {
-                foreach (var stat in BaseStats.Keys)
-                {
-                    CurrentStats[stat] = new Stat(stat);
-                }
-            }
-            StatHistory.Add(CurrentStats);
-            foreach (var stat in CurrentStats.Keys)
-            {
-                var baseStat = BaseStats[stat];
-                var currentStat = CurrentStats[stat];
-                var growthRate = GrowthRates[stat];
-                var classMod = Class.Modifiers.TryGetValue(stat, out var classModifier) ? classModifier : 0;
-                float statGrowth = growthRate.CalculateGrowthRate(Level);
-                statGrowth += currentStat.Overflow;
-                statGrowth *= classMod;
-                float newOverflow = statGrowth % 1;
+        // Derived combat stats
+        public int MaxHP => CurrentStats[Stat.StatKey.END].Value * 10;
+        public int MaxMP => CurrentStats[Stat.StatKey.SPI].Value * 12;
 
-                var newStat = new Stat(stat)
+        /// <summary>
+        /// Copies BaseStats into CurrentStats. Call once after setting base stats during character creation.
+        /// </summary>
+        public void InitializeStats()
+        {
+            foreach (var stat in BaseStats.Keys)
+            {
+                CurrentStats[stat] = new Stat(stat)
                 {
-                    Value = Mathf.FloorToInt(baseStat.Value + statGrowth),
+                    Value = BaseStats[stat].Value,
+                    Overflow = 0f
+                };
+            }
+            SnapshotStats();
+        }
+
+        /// <summary>
+        /// Applies one level of growth to CurrentStats using growth rates and class modifiers.
+        /// </summary>
+        public void LevelUp()
+        {
+            Level++;
+            foreach (var stat in new List<Stat.StatKey>(CurrentStats.Keys))
+            {
+                var current = CurrentStats[stat];
+                var growthRate = GrowthRates[stat];
+                var classMod = Class.Modifiers.TryGetValue(stat, out var modifier) ? modifier : 0f;
+
+                float rawGrowth = growthRate.CalculateGrowthRate(Level);
+                float adjustedGrowth = rawGrowth * (1f + classMod) + current.Overflow;
+
+                int intGrowth = Mathf.FloorToInt(adjustedGrowth);
+                float newOverflow = adjustedGrowth - intGrowth;
+
+                CurrentStats[stat] = new Stat(stat)
+                {
+                    Value = current.Value + intGrowth,
                     Overflow = newOverflow
                 };
-
-                CurrentStats[stat] = newStat;
             }
+            SnapshotStats();
+            GD.Print($"{CharacterName} leveled up to {Level}!");
+        }
+
+        public void AddExperience(int amount)
+        {
+            Experience += amount;
+            while (TryLevelUp()) { }
+        }
+
+        private bool TryLevelUp()
+        {
+            int xpNeeded = Level * 100;
+            if (Experience >= xpNeeded)
+            {
+                Experience -= xpNeeded;
+                LevelUp();
+                return true;
+            }
+            return false;
+        }
+
+        private void SnapshotStats()
+        {
+            var snapshot = new Dictionary<Stat.StatKey, Stat>();
+            foreach (var kvp in CurrentStats)
+            {
+                snapshot[kvp.Key] = new Stat(kvp.Key) { Value = kvp.Value.Value, Overflow = kvp.Value.Overflow };
+            }
+            StatHistory.Add(snapshot);
         }
     }
 }
